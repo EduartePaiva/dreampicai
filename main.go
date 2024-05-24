@@ -2,6 +2,7 @@ package main
 
 import (
 	"dreampicai/handler"
+	"dreampicai/pkg/supabase"
 	"embed"
 	"log"
 	"log/slog"
@@ -36,5 +37,5 @@ func initEverything() error {
 	if err := godotenv.Load(); err != nil {
 		return err
 	}
-	return nil
+	return supabase.Init()
 }
