@@ -1,4 +1,4 @@
-package supabase
+package sb
 
 import (
 	"errors"

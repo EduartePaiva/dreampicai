@@ -1,3 +1,12 @@
 {
-    "cSpell.words": ["dreampicai", "godotenv", "joho", "signin", "supabase", "tailwindcss", "templ"]
+    "cSpell.words": [
+        "creds",
+        "dreampicai",
+        "godotenv",
+        "joho",
+        "signin",
+        "supabase",
+        "tailwindcss",
+        "templ"
+    ]
 }

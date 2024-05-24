@@ -1,36 +1,58 @@
 package auth
 
 import "dreampicai/view/layout"
+import "github.com/nedpals/supabase-go"
 
 templ Login() {
 	@layout.App(false) {
 		<div class="flex justify-center mt-[8rem]">
 			<div class="max-w-screen-sm w-full bg-base-300 py-12 px-16 rounded-xl">
 				<h1 class="text-center text-xl font-black mb-10">Login to dreampicai</h1>
-				<div class="space-y-4">
-					<label class="form-control w-full">
-						<div class="label">
-							<span class="label-text">Email address</span>
-						</div>
-						<input type="email" required placeholder="Type here" class="input input-bordered w-full"/>
-						<div class="label">
-							<span class="label-text-alt text-error">this is wrong</span>
-						</div>
-					</label>
-					<label class="form-control w-full">
-						<div class="label">
-							<span class="label-text">Password</span>
-						</div>
-						<input type="password" required autocomplete="off" placeholder="Type here" class="input input-bordered w-full"/>
-						<div class="label">
-							<span class="label-text-alt text-error">this is wrong</span>
-						</div>
-					</label>
-					<button class="btn btn-primary w-full">
-						login <i class="fa-solid fa-arrow-right"></i>
-					</button>
-				</div>
+				@LoginForm(supabase.UserCredentials{}, LoginErrors{})
 			</div>
 		</div>
 	}
+}
+
+type LoginErrors struct {
+	Email              string
+	Password           string
+	InvalidCredentials string
+}
+
+templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
+	<form
+		hx-post="/login"
+		hx-swap="outerHTML"
+		class="space-y-4"
+	>
+		<label class="form-control w-full">
+			<div class="label">
+				<span class="label-text">Email address</span>
+			</div>
+			<input type="email" value={ credentials.Email } name="email" required placeholder="Type here" class="input input-bordered w-full"/>
+			if len(errors.Email) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.Email }</span>
+				</div>
+			}
+		</label>
+		<label class="form-control w-full">
+			<div class="label">
+				<span class="label-text">Password</span>
+			</div>
+			<input type="password" name="password" required autocomplete="off" placeholder="Type here" class="input input-bordered w-full"/>
+			if len(errors.Password) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.Password }</span>
+				</div>
+			}
+		</label>
+		if len(errors.InvalidCredentials) > 0 {
+			<div class="text-sm text-error">{ errors.InvalidCredentials }</div>
+		}
+		<button class="btn btn-primary w-full" type="submit">
+			login <i class="fa-solid fa-arrow-right"></i>
+		</button>
+	</form>
 }
