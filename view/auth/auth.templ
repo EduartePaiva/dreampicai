@@ -6,9 +6,20 @@ import "github.com/nedpals/supabase-go"
 templ Login() {
 	@layout.App(false) {
 		<div class="flex justify-center mt-[8rem]">
-			<div class="max-w-screen-sm w-full bg-base-300 py-12 px-16 rounded-xl">
+			<div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
 				<h1 class="text-center text-xl font-black mb-10">Login to dreampicai</h1>
 				@LoginForm(supabase.UserCredentials{}, LoginErrors{})
+			</div>
+		</div>
+	}
+}
+
+templ SignUp() {
+	@layout.App(false) {
+		<div class="flex justify-center mt-[8rem]">
+			<div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
+				<h1 class="text-center text-xl font-black mb-10">Signup to dreampicai</h1>
+				signup form here
 			</div>
 		</div>
 	}

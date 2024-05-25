@@ -1358,8 +1358,8 @@ html {
   width: 100%;
 }
 
-.max-w-screen-sm {
-  max-width: 640px;
+.max-w-md {
+  max-width: 28rem;
 }
 
 .flex-1 {
@@ -1417,9 +1417,9 @@ html {
   padding-right: 0.25rem;
 }
 
-.px-16 {
-  padding-left: 4rem;
-  padding-right: 4rem;
+.px-8 {
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .py-12 {

@@ -5,6 +5,7 @@
         "godotenv",
         "joho",
         "signin",
+        "signup",
         "supabase",
         "tailwindcss",
         "templ"
