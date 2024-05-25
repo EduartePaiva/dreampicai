@@ -1,6 +1,7 @@
 package util
 
 import (
+	"dreampicai/view/auth"
 	"regexp"
 	"unicode"
 )
@@ -55,4 +56,23 @@ func IsValidPassword(password string) (string, bool) {
 	}
 
 	return "", true
+}
+
+func IsValidSignupForm(params auth.SignupParams) (bool, auth.SignupErrors) {
+	errors := auth.SignupErrors{}
+	isValid := true
+	if !IsValidEmail(params.Email) {
+		isValid = false
+		errors.Email = "Please enter a valid email"
+	}
+	if reason, ok := IsValidPassword(params.Password); !ok {
+		isValid = false
+		errors.Password = reason
+	}
+	if params.Password != params.ConfirmPassword {
+		isValid = false
+		errors.ConfirmPassword = "Passwords do not match"
+	}
+
+	return isValid, errors
 }
