@@ -128,3 +128,11 @@ templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
 		</button>
 	</form>
 }
+
+templ CallbackScript() {
+	<script>
+		var url = window.location.href;
+		var newURL = url.replace("#", "?");
+		window.location = newURL; 
+	</script>
+}

@@ -28,6 +28,7 @@ func main() {
 	router.Get("/", handler.Make(handler.HandleHomeIndex))
 	router.Get("/login", handler.Make(handler.HandleLoginIndex))
 	router.Get("/signup", handler.Make(handler.HandleSignupIndex))
+	router.Get("/auth/callback", handler.Make(handler.HandleAuthCallback))
 	router.Post("/login", handler.Make(handler.HandleLoginCreate))
 	router.Post("/signup", handler.Make(handler.HandleSignupCreate))
 

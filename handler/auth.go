@@ -13,6 +13,7 @@ import (
 func HandleLoginIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(r, w, auth.Login())
 }
+
 func HandleSignupIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(r, w, auth.SignUp())
 }
@@ -50,17 +51,29 @@ func HandleLoginCreate(w http.ResponseWriter, r *http.Request) error {
 			InvalidCredentials: "The credentials you have entered are invalid",
 		}))
 	}
+	setAuthCookie(w, resp.AccessToken)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 
+	return nil
+}
+
+func HandleAuthCallback(w http.ResponseWriter, r *http.Request) error {
+	accessToken := r.URL.Query().Get("access_token")
+	if len(accessToken) == 0 {
+		return render(r, w, auth.CallbackScript())
+	}
+	setAuthCookie(w, accessToken)
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+	return nil
+}
+
+func setAuthCookie(w http.ResponseWriter, accessToken string) {
 	cookie := &http.Cookie{
-		Value:    resp.AccessToken,
+		Value:    accessToken,
 		Name:     "at",
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
 	}
 	http.SetCookie(w, cookie)
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-
-	return nil
 }
