@@ -6,6 +6,7 @@ import (
 	"dreampicai/view/auth"
 	"log/slog"
 	"net/http"
+	"net/url"
 
 	"github.com/nedpals/supabase-go"
 )
@@ -52,9 +53,17 @@ func HandleLoginCreate(w http.ResponseWriter, r *http.Request) error {
 		}))
 	}
 	setAuthCookie(w, resp.AccessToken)
-	http.Redirect(w, r, "/", http.StatusSeeOther)
 
-	return nil
+	path := r.Header.Get("Hx-Current-Url")
+	url, err := url.Parse(path)
+	if err != nil {
+		return hxRedirect(w, r, "/")
+	}
+	toRedirect := url.Query().Get("to")
+	if len(toRedirect) == 0 {
+		toRedirect = "/"
+	}
+	return hxRedirect(w, r, toRedirect)
 }
 
 func HandleAuthCallback(w http.ResponseWriter, r *http.Request) error {
@@ -64,6 +73,20 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) error {
 	}
 	setAuthCookie(w, accessToken)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
+	return nil
+}
+
+func HandleLogoutCreate(w http.ResponseWriter, r *http.Request) error {
+	cookie := http.Cookie{
+		Value:    "",
+		Name:     "at",
+		MaxAge:   -1,
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+	}
+	http.SetCookie(w, &cookie)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
 	return nil
 }
 
