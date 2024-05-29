@@ -9,6 +9,7 @@ install:
 	@go mod download
 	@npm install -D tailwindcss
 	@npm install -D daisyui@latest
+	@npm install -D drizzle-kit
 
 css:
 	@tailwindcss -i view/css/app.css -o public/styles.css --watch 
@@ -21,17 +22,28 @@ build:
 	@templ generate view
 	@go build -tags dev -o bin/dreampicai main.go 
 
+# db migration stuff
 up: ## Database migration up
-	@go run cmd/migrate/main.go up
+	# @go run cmd/migrate/main.go up
+	@npx drizzle-kit migrate
 
 reset:
-	@go run cmd/reset/main.go up
+	# @go run cmd/reset/main.go up
 
 down: ## Database migration down
-	@go run cmd/migrate/main.go down
+	# @go run cmd/migrate/main.go down
+	@npx drizzle-kit drop
 
 migration: ## Migrations against the database
-	@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
+	#@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
+	@npx drizzle-kit generate
+
+miup:
+	@npx drizzle-kit migrate
+	@npx drizzle-kit generate
 
 seed:
-	@go run cmd/seed/main.go
+	# @go run cmd/seed/main.go
+
+studio:
+	@npx drizzle-kit studio
