@@ -7,7 +7,7 @@ import (
 
 type Account struct {
 	ID        int       `bun:"id,pk,autoincrement"`
-	UserID    uuid.UUID `bun:"type:uuid"`
-	UserName  string    `json:"userName"`
-	CreatedAt time.Time `bun:"default:'now()'"`
+	UserID    uuid.UUID `bun:"user_id,type:uuid"`
+	UserName  string    `bun:"user_name"`
+	CreatedAt time.Time `bun:"created_at,default:'now()'"`
 }
