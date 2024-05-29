@@ -7,6 +7,7 @@ import (
 	"dreampicai/pkg/sb"
 	"dreampicai/types"
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -41,8 +42,33 @@ func WithUser(next http.Handler) http.Handler {
 			Email:    resp.Email,
 			LoggedIn: true,
 		}
+		ctx := context.WithValue(r.Context(), types.UserContextKey, user)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	}
+	return http.HandlerFunc(fn)
+
+}
+
+func WithAccountSetup(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		user := getAuthenticatedUser(r)
+		if !user.LoggedIn {
+			fmt.Println(user)
+			if r.RequestURI != "/" {
+				http.Redirect(w, r, "/", http.StatusSeeOther)
+				return
+			}
+			next.ServeHTTP(w, r)
+			return
+		}
 		account, err := db.GetAccountByUserID(user.ID)
-		if !errors.Is(err, sql.ErrNoRows) {
+		// The user has not setup his account yet.
+		// Hence, redirect him to /account/setup
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) && r.RequestURI != "/account/setup" {
+				http.Redirect(w, r, "/account/setup", http.StatusSeeOther)
+				return
+			}
 			next.ServeHTTP(w, r)
 			return
 		}
@@ -51,8 +77,8 @@ func WithUser(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
-
 }
+
 func WithAuth(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		if strings.Contains(r.URL.Path, "/public") {

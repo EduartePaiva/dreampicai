@@ -36,8 +36,11 @@ func main() {
 	router.Post("/signup", handler.Make(handler.HandleSignupCreate))
 
 	router.Group(func(auth chi.Router) {
-		auth.Use(handler.WithAuth)
+		auth.Use(handler.WithAccountSetup)
+		auth.Get("/", handler.Make(handler.HandleHomeIndex))
 		auth.Get("/settings", handler.Make(handler.HandleSettingsIndex))
+		auth.Get("/account/setup", handler.Make(handler.HandleAccountSetupIndex))
+		auth.Post("/account/setup", handler.Make(handler.HandleAccountSetupCreate))
 	})
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")

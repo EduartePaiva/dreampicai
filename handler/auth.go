@@ -1,8 +1,10 @@
 package handler
 
 import (
+	"dreampicai/db"
 	"dreampicai/pkg/sb"
 	"dreampicai/pkg/util"
+	"dreampicai/types"
 	"dreampicai/view/auth"
 	"log/slog"
 	"net/http"
@@ -17,6 +19,30 @@ const (
 	sessionUserKey        = "user"
 	sessionAccessTokenKey = "accessToken"
 )
+
+func HandleAccountSetupIndex(w http.ResponseWriter, r *http.Request) error {
+	return render(r, w, auth.AccountSetup())
+}
+func HandleAccountSetupCreate(w http.ResponseWriter, r *http.Request) error {
+	params := auth.AccountSetupData{
+		Username: r.FormValue("username"),
+	}
+	if len(params.Username) < 3 || len(params.Username) > 50 {
+		return render(r, w, auth.AccountSetupForm(params, auth.AccountSetupErrors{
+			Username: "Invalid Username",
+		}))
+	}
+	user := getAuthenticatedUser(r)
+	account := types.Account{
+		UserID:   user.ID,
+		UserName: params.Username,
+	}
+	if err := db.CreateAccount(&account); err != nil {
+		return err
+	}
+
+	return hxRedirect(w, r, "/")
+}
 
 func HandleLoginIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(r, w, auth.Login())
