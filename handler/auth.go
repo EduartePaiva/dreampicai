@@ -2,6 +2,7 @@ package handler
 
 import (
 	"dreampicai/db"
+	"dreampicai/pkg/kit/validate"
 	"dreampicai/pkg/sb"
 	"dreampicai/pkg/util"
 	"dreampicai/types"
@@ -27,11 +28,14 @@ func HandleAccountSetupCreate(w http.ResponseWriter, r *http.Request) error {
 	params := auth.AccountSetupData{
 		Username: r.FormValue("username"),
 	}
-	if len(params.Username) < 3 || len(params.Username) > 50 {
-		return render(r, w, auth.AccountSetupForm(params, auth.AccountSetupErrors{
-			Username: "Invalid Username",
-		}))
+	var errors auth.AccountSetupErrors
+	ok := validate.New(&params, validate.Fields{
+		"Username": validate.Rules(validate.Min(2), validate.Max(50)),
+	}).Validate(&errors)
+	if !ok {
+		return render(r, w, auth.AccountSetupForm(params, errors))
 	}
+
 	user := getAuthenticatedUser(r)
 	account := types.Account{
 		UserID:   user.ID,

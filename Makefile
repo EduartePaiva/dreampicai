@@ -12,10 +12,10 @@ install:
 	@npm install -D drizzle-kit
 
 css:
-	@tailwindcss -i view/css/app.css -o public/styles.css --watch 
+	@npx tailwindcss -i view/css/app.css -o public/styles.css --watch 
 
 templ:
-	@templ generate --watch --proxy=http://localhost:3000
+	@templ generate --watch --proxy=http://localhost:3131 --open-browser=false
 
 build:
 	@npx tailwindcss -i view/css/app.css -o public/styles.css
@@ -47,3 +47,6 @@ seed:
 
 studio:
 	@npx drizzle-kit studio
+
+live: 
+	make -j2 css templ

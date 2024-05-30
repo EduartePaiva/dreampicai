@@ -14,6 +14,15 @@ func CreateAccount(account *types.Account) error {
 	return err
 }
 
+// func UpdateAccount(account *types.Account) error {
+// 	_, err := Bun.NewUpdate().
+// 		Model(account).
+// 		Where("user_id = ?", account.UserID).
+// 		Exec(context.Background())
+
+// 	return err
+// }
+
 func GetAccountByUserID(userID uuid.UUID) (types.Account, error) {
 	account := types.Account{}
 	err := Bun.NewSelect().

@@ -24,19 +24,18 @@ templ AccountSetupForm(params AccountSetupData, errors AccountSetupErrors) {
 		hx-post="/account/setup"
 		hx-swap="outerHTML"
 	>
-		<label class="input input-bordered items-center flex gap-2 mb-4 overflow-hidden">
-			<div class="label shrink-0">
-				<span class="label-text-alt">Enter your username</span>
+		<label class="form-control w-full max-w-xs">
+			<div class="label">
+				<span class="label-text">Enter your username</span>
 			</div>
-			<svg class="shrink-0 size-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="w-4 h-4 opacity-70"><path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z"></path></svg>
-			<input name="username" type="text" class="flex-1 shrink min-w-0"/>
-			if len(errors.Username) > 0 {
-				<div class="label shrink-0">
-					<span class="label-text-alt text-error">{ errors.Username }</span>
-				</div>
-			}
+			<input name="username" type="text" class="input input-bordered"/>
+			<div class="label">
+				if len(errors.Username) > 0 {
+					<span class="label-text text-error">{ errors.Username }</span>
+				}
+			</div>
 		</label>
-		<button class="btn btn-primary">submit</button>
+		<button class="btn btn-primary">setup account <i class="fa-solid fa-arrow-right"></i></button>
 	</form>
 }
 
