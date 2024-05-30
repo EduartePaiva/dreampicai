@@ -2,27 +2,22 @@ package settings
 
 import "dreampicai/types"
 import "dreampicai/view/layout"
+import "dreampicai/view/components"
+
+type ProfileParams struct {
+	Username string
+	Success  bool
+}
+type ProfileErrors struct {
+	Username string
+}
 
 templ Index(user types.AuthenticatedUser) {
 	@layout.App(true) {
-		<div class="max-w-2xl w-full mx-auto mt-4">
+		<div class="max-w-2xl w-full mx-auto mt-8">
 			<div>
 				<h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Profile</h1>
-				<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
-					<dt>Username</dt>
-					<dd class="sm:col-span-2 sm:mt-0">
-						<input
-							value={ user.Account.UserName }
-							class="input input-bordered w-full max-w-sm"
-							type="text"
-							name="username"
-						/>
-					</dd>
-					<dt></dt>
-					<dd class="sm:col-span-2 sm:mt-0">
-						<button class="btn btn-primary">save</button>
-					</dd>
-				</div>
+				@ProfileForm(ProfileParams{Username: user.UserName}, ProfileErrors{})
 			</div>
 			<div class="mt-10">
 				<h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Change password</h1>
@@ -47,4 +42,33 @@ templ Index(user types.AuthenticatedUser) {
 			</div>
 		</div>
 	}
+}
+
+templ ProfileForm(params ProfileParams, errors ProfileErrors) {
+	<form
+		hx-put="/settings/account/profile"
+		hx-swap="outerHTML"
+	>
+		<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
+			<dt>Username</dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				if params.Success {
+					@components.Toast("Username updated successfully")
+				}
+				<input
+					value={ params.Username }
+					class="input input-bordered w-full max-w-sm"
+					type="text"
+					name="username"
+				/>
+				if len(errors.Username) > 0 {
+					<div class="text-sm text-error mt-1">{ errors.Username }</div>
+				}
+			</dd>
+			<dt></dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				<button class="btn btn-primary">save</button>
+			</dd>
+		</div>
+	</form>
 }

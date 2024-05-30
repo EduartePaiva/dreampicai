@@ -14,14 +14,14 @@ func CreateAccount(account *types.Account) error {
 	return err
 }
 
-// func UpdateAccount(account *types.Account) error {
-// 	_, err := Bun.NewUpdate().
-// 		Model(account).
-// 		Where("user_id = ?", account.UserID).
-// 		Exec(context.Background())
+func UpdateAccount(account *types.Account) error {
+	_, err := Bun.NewUpdate().
+		Model(account).
+		WherePK().
+		Exec(context.Background())
 
-// 	return err
-// }
+	return err
+}
 
 func GetAccountByUserID(userID uuid.UUID) (types.Account, error) {
 	account := types.Account{}
