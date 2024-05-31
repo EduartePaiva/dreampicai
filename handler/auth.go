@@ -21,6 +21,43 @@ const (
 	sessionAccessTokenKey = "accessToken"
 )
 
+func HandleResetPasswordIndex(w http.ResponseWriter, r *http.Request) error {
+	return render(r, w, auth.ResetPassword())
+}
+func HandleResetPasswordCreate(w http.ResponseWriter, r *http.Request) error {
+	user := getAuthenticatedUser(r)
+	err := sb.Client.Auth.ResetPasswordForEmail(r.Context(), user.Email)
+	if err != nil {
+		return err
+	}
+
+	return render(r, w, auth.ResetPasswordSuccess(user.Email))
+}
+func HandleResetPasswordUpdate(w http.ResponseWriter, r *http.Request) error {
+	params := auth.ResetPasswordParams{
+		NewPassword:     r.FormValue("new-password"),
+		ConfirmPassword: r.FormValue("confirm-password"),
+	}
+	errors := auth.ResetPasswordErrors{}
+	ok := validate.New(&params, validate.Fields{
+		"NewPassword": validate.Rules(validate.Password),
+		"ConfirmPassword": validate.Rules(
+			validate.Equal(params.NewPassword),
+			validate.Message("passwords do not match"),
+		),
+	}).Validate(&errors)
+	if !ok {
+		return render(r, w, auth.ResetPasswordForm(errors))
+	}
+
+	//do logic to change psw
+
+	// if err := render(r, w, components.Toast("Password updated")); err != nil {
+	// 	return err
+	// }
+	return hxRedirect(w, r, "/")
+}
+
 func HandleAccountSetupIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(r, w, auth.AccountSetup())
 }

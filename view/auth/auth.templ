@@ -3,6 +3,66 @@ package auth
 import "dreampicai/view/layout"
 import "github.com/nedpals/supabase-go"
 
+templ ResetPassword() {
+	@layout.App(true) {
+		<div class="max-w-2xl w-full mx-auto mt-8">
+			<div>
+				<h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Reset password</h1>
+				@ResetPasswordForm(ResetPasswordErrors{})
+			</div>
+		</div>
+	}
+}
+
+type ResetPasswordErrors struct {
+	NewPassword     string
+	ConfirmPassword string
+}
+type ResetPasswordParams struct {
+	NewPassword     string
+	ConfirmPassword string
+}
+
+templ ResetPasswordForm(errors ResetPasswordErrors) {
+	<form
+		hx-put="/auth/reset-password"
+		hx-swap="outerHTML"
+	>
+		<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
+			<dt>Enter new password</dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				<input
+					type="password"
+					class="input input-bordered w-full max-w-sm"
+					name="new-password"
+				/>
+				if len(errors.NewPassword) > 0 {
+					<div class="text-sm text-error mt-1">{ errors.NewPassword }</div>
+				}
+			</dd>
+			<dt>Confirm new password</dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				<input
+					type="password"
+					class="input input-bordered w-full max-w-sm"
+					name="confirm-password"
+				/>
+				if len(errors.ConfirmPassword) > 0 {
+					<div class="text-sm text-error mt-1">{ errors.ConfirmPassword }</div>
+				}
+			</dd>
+			<dt></dt>
+			<dd>
+				<button class="btn btn-primary">update password</button>
+			</dd>
+		</div>
+	</form>
+}
+
+templ ResetPasswordSuccess(email string) {
+	<div>A password reset link is being sent to <span class="text-info font-semibold">{ email }</span></div>
+}
+
 templ AccountSetup() {
 	@layout.App(true) {
 		<div class="max-w-xl w-full bg-base-300 mx-auto mt-4 px-6 py-12 rounded-xl">
