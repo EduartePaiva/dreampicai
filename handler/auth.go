@@ -31,7 +31,7 @@ func HandleResetPasswordCreate(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	return render(r, w, auth.ResetPasswordSuccess(user.Email))
+	return render(r, w, auth.ResetPasswordInitiated(user.Email))
 }
 func HandleResetPasswordUpdate(w http.ResponseWriter, r *http.Request) error {
 	params := auth.ResetPasswordParams{
