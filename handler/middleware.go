@@ -31,7 +31,9 @@ func WithUser(next http.Handler) http.Handler {
 			return
 		}
 		accessToken := session.Values[sessionAccessTokenKey]
-
+		if accessToken == nil {
+			accessToken = ""
+		}
 		resp, err := sb.Client.Auth.User(r.Context(), accessToken.(string))
 		if err != nil {
 			next.ServeHTTP(w, r)
@@ -52,15 +54,6 @@ func WithUser(next http.Handler) http.Handler {
 func WithAccountSetup(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		user := getAuthenticatedUser(r)
-		if !user.LoggedIn {
-			fmt.Println(user)
-			if r.RequestURI != "/" {
-				http.Redirect(w, r, "/", http.StatusSeeOther)
-				return
-			}
-			next.ServeHTTP(w, r)
-			return
-		}
 		account, err := db.GetAccountByUserID(user.ID)
 		// The user has not setup his account yet.
 		// Hence, redirect him to /account/setup
@@ -75,6 +68,19 @@ func WithAccountSetup(next http.Handler) http.Handler {
 		user.Account = account
 		ctx := context.WithValue(r.Context(), types.UserContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
+	}
+	return http.HandlerFunc(fn)
+}
+
+func WithoutAccountSetup(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		user := getAuthenticatedUser(r)
+		fmt.Println("oi: ", user)
+		if user.Account.ID != 0 {
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+		next.ServeHTTP(w, r)
 	}
 	return http.HandlerFunc(fn)
 }

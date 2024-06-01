@@ -7,11 +7,14 @@ import (
 templ Navigation() {
 	<div class="navbar bg-base-100 border-b border-gray-700">
 		<div class="flex-1">
-			<a class="text-2xl font-black text-primary">dreampicai</a>
+			<a href="/" class="text-2xl font-black text-primary">dreampicai</a>
 		</div>
 		<div class="flex-none">
 			<ul class="menu menu-horizontal px-1">
 				if view.AuthenticatedUser(ctx).LoggedIn {
+					<li>
+						<a href="/generate"><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</a>
+					</li>
 					<li>
 						<details>
 							<summary>

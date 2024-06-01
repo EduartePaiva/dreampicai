@@ -7,6 +7,7 @@ import (
 	"dreampicai/pkg/util"
 	"dreampicai/types"
 	"dreampicai/view/auth"
+	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -22,14 +23,21 @@ const (
 )
 
 func HandleResetPasswordIndex(w http.ResponseWriter, r *http.Request) error {
+	accessToken := r.URL.Query().Get("access_token")
+	if len(accessToken) == 0 {
+		return render(r, w, auth.CallbackScript())
+	}
+	fmt.Println(accessToken)
 	return render(r, w, auth.ResetPassword())
 }
 func HandleResetPasswordCreate(w http.ResponseWriter, r *http.Request) error {
 	user := getAuthenticatedUser(r)
-	err := sb.Client.Auth.ResetPasswordForEmail(r.Context(), user.Email)
-	if err != nil {
-		return err
-	}
+	// port := os.Getenv("HTTP_LISTEN_ADDR")
+	// err := sb.MyResetPasswordForEmail(r.Context(), user.Email, "http://localhost"+port+"/auth/reset-password")
+	// if err != nil {
+	// 	return err
+	// }
+	// to avoid running out of emails
 
 	return render(r, w, auth.ResetPasswordInitiated(user.Email))
 }
