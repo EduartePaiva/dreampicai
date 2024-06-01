@@ -1750,6 +1750,18 @@ html {
   display: flex;
 }
 
+.h-\[calc\(100vh-69px\)\] {
+  height: calc(100vh - 69px);
+}
+
+.w-1\/4 {
+  width: 25%;
+}
+
+.w-3\/4 {
+  width: 75%;
+}
+
 .w-full {
   width: 100%;
 }
@@ -1811,6 +1823,10 @@ html {
 
 .border-b {
   border-bottom-width: 1px;
+}
+
+.border-r {
+  border-right-width: 1px;
 }
 
 .border-gray-700 {
@@ -1920,6 +1936,11 @@ html {
 .antialiased {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.border-app {
+  --tw-border-opacity: 1;
+  border-color: rgb(55 65 81 / var(--tw-border-opacity));
 }
 
 @media (min-width: 640px) {

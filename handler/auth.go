@@ -7,7 +7,6 @@ import (
 	"dreampicai/pkg/util"
 	"dreampicai/types"
 	"dreampicai/view/auth"
-	"fmt"
 	"log/slog"
 	"net/http"
 	"net/url"
@@ -27,7 +26,6 @@ func HandleResetPasswordIndex(w http.ResponseWriter, r *http.Request) error {
 	if len(accessToken) == 0 {
 		return render(r, w, auth.CallbackScript())
 	}
-	fmt.Println(accessToken)
 	return render(r, w, auth.ResetPassword())
 }
 func HandleResetPasswordCreate(w http.ResponseWriter, r *http.Request) error {

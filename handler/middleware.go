@@ -7,7 +7,6 @@ import (
 	"dreampicai/pkg/sb"
 	"dreampicai/types"
 	"errors"
-	"fmt"
 	"net/http"
 	"os"
 	"strings"
@@ -75,12 +74,14 @@ func WithAccountSetup(next http.Handler) http.Handler {
 func WithoutAccountSetup(next http.Handler) http.Handler {
 	fn := func(w http.ResponseWriter, r *http.Request) {
 		user := getAuthenticatedUser(r)
-		fmt.Println("oi: ", user)
-		if user.Account.ID != 0 {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
-			return
+		_, err := db.GetAccountByUserID(user.ID)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				next.ServeHTTP(w, r)
+				return
+			}
 		}
-		next.ServeHTTP(w, r)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
 	}
 	return http.HandlerFunc(fn)
 }
