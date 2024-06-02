@@ -15,6 +15,13 @@
       "when": 1716941718989,
       "tag": "0001_melted_grandmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1717335982489,
+      "tag": "0002_heavy_william_stryker",
+      "breakpoints": true
     }
   ]
 }

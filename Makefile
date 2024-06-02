@@ -23,7 +23,7 @@ build:
 	@go build -tags dev -o bin/dreampicai main.go 
 
 # db migration stuff
-up: ## Database migration up
+migrate: ## Database migration up
 	# @go run cmd/migrate/main.go up
 	@npx drizzle-kit migrate
 
@@ -34,13 +34,13 @@ down: ## Database migration down
 	# @go run cmd/migrate/main.go down
 	@npx drizzle-kit drop
 
-migration: ## Migrations against the database
+generate: ## Migrations against the database
 	#@migrate create -ext sql -dir cmd/migrate/migrations $(filter-out $@,$(MAKECMDGOALS))
 	@npx drizzle-kit generate
 
 miup:
-	@npx drizzle-kit migrate
 	@npx drizzle-kit generate
+	@npx drizzle-kit migrate
 
 seed:
 	# @go run cmd/seed/main.go

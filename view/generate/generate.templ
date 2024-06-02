@@ -26,7 +26,7 @@ templ Index(data ViewData) {
 templ Form() {
 	<form
 		hx-post="/generate"
-		hx-swap="beforeend"
+		hx-swap="afterbegin"
 		hx-target="#gallery"
 	>
 		<div class="">
@@ -45,16 +45,23 @@ templ Gallery(images []types.Image) {
 
 templ GalleryImage(image types.Image) {
 	if image.Status == types.ImageStatusCompleted {
-		<div class="bg-green-100 rounded-xl aspect-[3/4]"></div>
+		<div class="bg-green-100 rounded-xl aspect-[2/3] cursor-pointer">
+			<img
+				class="object-cover rounded-xl"
+				src={ image.ImageLocation }
+				alt="emb image"
+			/>
+		</div>
 	} else if image.Status == types.ImageStatusFailed {
-		<div class="bg-red-100 rounded-xl aspect-[3/4] flex justify-center items-center">
+		<div class="bg-red-100 rounded-xl aspect-[2/3] flex justify-center items-center">
 			<i class="fa-solid fa-bug text-5xl text-slate-600"></i>
 		</div>
 	} else if image.Status == types.ImageStatusPending {
 		<div
-			hx-get={ fmt.Sprintf("/generate/image/status/%d", image.ID) }
+			hx-get={ fmt.Sprintf("/generate/image/status/%s", image.ID.String()) }
 			hx-trigger="load delay:3s"
-			class="bg-red-100 rounded-xl aspect-[3/4] flex justify-center items-center"
+			hx-swap="outerHTML"
+			class="bg-red-100 rounded-xl aspect-[2/3] flex justify-center items-center"
 		>
 			<span class="loading loading-spinner loading-lg text-gray-700"></span>
 		</div>
