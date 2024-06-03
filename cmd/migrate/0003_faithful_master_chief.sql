@@ -1,0 +1,1 @@
+ALTER TABLE "images" ADD COLUMN "batch_id" uuid NOT NULL;

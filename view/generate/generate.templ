@@ -4,17 +4,20 @@ import (
 	"dreampicai/view/layout"
 	"dreampicai/types"
 	"fmt"
+	"strconv"
 )
 
 type ViewData struct {
-	Images []types.Image
+	Images     []types.Image
+	FormParams FormParams
+	FormErrors FormErrors
 }
 
 templ Index(data ViewData) {
 	@layout.App(true) {
 		<div class="flex w-full h-[calc(100vh-69px)]">
 			<div class="w-[400px] border-r border-app p-4">
-				@Form()
+				@Form(data.FormParams, data.FormErrors)
 			</div>
 			<div class="flex-1 bg-base-300">
 				@Gallery(data.Images)
@@ -23,14 +26,57 @@ templ Index(data ViewData) {
 	}
 }
 
-templ Form() {
+type FormParams struct {
+	Prompt string
+	Amount int
+}
+type FormErrors struct {
+	Prompt string
+	Amount string
+}
+
+templ Form(params FormParams, errors FormErrors) {
 	<form
 		hx-post="/generate"
-		hx-swap="afterbegin"
-		hx-target="#gallery"
+		hx-swap="outerHTML"
 	>
+		<label class="form-control">
+			<div class="label">
+				<span class="label-text">Enter your prompt</span>
+			</div>
+			<textarea
+				value={ params.Prompt }
+				name="prompt"
+				class="textarea textarea-bordered h-24"
+				placeholder="A woman in a white dress"
+			></textarea>
+			if len(errors.Prompt) > 0 {
+				<div class="label">
+					<span class="label-text text-error">{ errors.Prompt }</span>
+				</div>
+			}
+		</label>
+		<label class="form-control my-4">
+			<div class="label">
+				<span class="label-text">How many images?</span>
+			</div>
+			<div class="join">
+				for _,amount := range amounts {
+					if amount == strconv.Itoa(params.Amount) {
+						<input type="radio" value={ amount } name="amount" aria-label={ amount } class="join-item btn" checked/>
+					} else {
+						<input type="radio" value={ amount } name="amount" aria-label={ amount } class="join-item btn"/>
+					}
+				}
+			</div>
+			if len(errors.Amount) > 0 {
+				<div class="label">
+					<span class="label-text text-error">{ errors.Amount }</span>
+				</div>
+			}
+		</label>
 		<div class="">
-			<button class="btn btn-primary w-full">generate</button>
+			<button class="btn mt-4 btn-primary w-full">generate</button>
 		</div>
 	</form>
 }
@@ -67,3 +113,5 @@ templ GalleryImage(image types.Image) {
 		</div>
 	}
 }
+
+var amounts = []string{"1", "2", "4", "8"}

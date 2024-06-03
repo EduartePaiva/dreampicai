@@ -159,6 +159,29 @@ func Min(n int) RuleFunc {
 		}
 	}
 }
+func OnlyTheseNumbers(n []int) RuleFunc {
+	return func() RuleSet {
+		return RuleSet{
+			Name:      "only_these_numbers",
+			RuleValue: n,
+			ValidateFunc: func(set RuleSet) bool {
+				fieldNumber, ok := set.FieldValue.(int)
+				if !ok {
+					return false
+				}
+				for _, num := range n {
+					if num == fieldNumber {
+						return true
+					}
+				}
+				return false
+			},
+			MessageFunc: func(set RuleSet) string {
+				return fmt.Sprintf("%s should be one of those numbers: %d", set.FieldName, n)
+			},
+		}
+	}
+}
 
 func Rules(rules ...RuleFunc) []RuleSet {
 	ruleSets := make([]RuleSet, len(rules))

@@ -28,6 +28,7 @@ export const image = pgTable("images", {
         .notNull(),
     imageLocation: text("image_location"),
     status: integer("status").notNull().default(1),
+    batchID: uuid("batch_id").notNull(),
     prompt: text("prompt").notNull(),
     deleted: boolean("deleted").notNull().default(false),
     createdAt: timestamp("created_at").defaultNow().notNull(),

@@ -2,11 +2,11 @@ package handler
 
 import (
 	"dreampicai/db"
-	"dreampicai/types"
+	"dreampicai/pkg/kit/validate"
 	"dreampicai/view/generate"
-	"fmt"
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -19,26 +19,42 @@ func HandleGenerateIndex(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	data := generate.ViewData{
-		Images: images,
+		Images:     images,
+		FormParams: generate.FormParams{Amount: 1},
 	}
-	fmt.Println(images[0].Status)
 	return render(r, w, generate.Index(data))
 }
 
 func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
-	prompt := "red sport car"
-	user := getAuthenticatedUser(r)
-	img := types.Image{
-		Prompt: prompt,
-		UserID: user.ID,
-		Status: types.ImageStatusPending,
+	// user := getAuthenticatedUser(r)
+
+	amount, _ := strconv.Atoi(r.FormValue("amount"))
+	params := generate.FormParams{
+		Prompt: r.FormValue("prompt"),
+		Amount: amount,
 	}
 
-	if err := db.CreateImage(&img); err != nil {
-		return err
+	var errors generate.FormErrors
+	ok := validate.New(params, validate.Fields{
+		"Prompt": validate.Rules(validate.Min(10), validate.Max(100)),
+		"Amount": validate.Rules(validate.OnlyTheseNumbers([]int{1, 2, 4, 8})),
+	}).Validate(&errors)
+	if !ok {
+		return render(r, w, generate.Form(params, errors))
 	}
 
-	return render(r, w, generate.GalleryImage(img))
+	return nil
+	// img := types.Image{
+	// 	Prompt: prompt,
+	// 	UserID: user.ID,
+	// 	Status: types.ImageStatusPending,
+	// }
+
+	// if err := db.CreateImage(&img); err != nil {
+	// 	return err
+	// }
+
+	// return render(r, w, generate.GalleryImage(img))
 }
 func HandleGenerateImageStatus(w http.ResponseWriter, r *http.Request) error {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))
