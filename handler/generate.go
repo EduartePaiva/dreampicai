@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"context"
+	"database/sql"
 	"dreampicai/db"
 	"dreampicai/pkg/kit/validate"
+	"dreampicai/types"
 	"dreampicai/view/generate"
 	"log/slog"
 	"net/http"
@@ -10,6 +13,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
 )
 
 func HandleGenerateIndex(w http.ResponseWriter, r *http.Request) error {
@@ -19,14 +23,14 @@ func HandleGenerateIndex(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 	data := generate.ViewData{
-		Images:     images,
-		FormParams: generate.FormParams{Amount: 1},
+		Images: images,
+		// FormParams: generate.FormParams{Amount: 1},
 	}
 	return render(r, w, generate.Index(data))
 }
 
 func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
-	// user := getAuthenticatedUser(r)
+	user := getAuthenticatedUser(r)
 
 	amount, _ := strconv.Atoi(r.FormValue("amount"))
 	params := generate.FormParams{
@@ -43,18 +47,25 @@ func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
 		return render(r, w, generate.Form(params, errors))
 	}
 
-	return nil
-	// img := types.Image{
-	// 	Prompt: prompt,
-	// 	UserID: user.ID,
-	// 	Status: types.ImageStatusPending,
-	// }
-
-	// if err := db.CreateImage(&img); err != nil {
-	// 	return err
-	// }
-
-	// return render(r, w, generate.GalleryImage(img))
+	err := db.Bun.RunInTx(r.Context(), &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
+		batchID := uuid.New()
+		for range params.Amount {
+			img := types.Image{
+				Prompt:  params.Prompt,
+				UserID:  user.ID,
+				Status:  types.ImageStatusPending,
+				BatchID: batchID,
+			}
+			if err := db.CreateImage(&img); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	return hxRedirect(w, r, "/generate")
 }
 func HandleGenerateImageStatus(w http.ResponseWriter, r *http.Request) error {
 	id, err := uuid.Parse(chi.URLParam(r, "id"))

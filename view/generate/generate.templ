@@ -45,11 +45,12 @@ templ Form(params FormParams, errors FormErrors) {
 				<span class="label-text">Enter your prompt</span>
 			</div>
 			<textarea
-				value={ params.Prompt }
 				name="prompt"
 				class="textarea textarea-bordered h-24"
 				placeholder="A woman in a white dress"
-			></textarea>
+			>
+				{ params.Prompt }
+			</textarea>
 			if len(errors.Prompt) > 0 {
 				<div class="label">
 					<span class="label-text text-error">{ errors.Prompt }</span>
