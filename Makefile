@@ -12,13 +12,19 @@ install:
 	@npm install -D drizzle-kit
 
 css:
-	@npx tailwindcss -i view/css/app.css -o public/styles.css --watch 
+	@npx tailwindcss -i view/css/app.css -o public/styles.css --minify --watch 
 
 templ:
-	@templ generate --watch --proxy=http://localhost:3131 --open-browser=false
+	@templ generate --watch --proxy=http://localhost:3131 --open-browser=false --proxybind="localhost" --proxyport="3000"
+
+air:
+	@air
+
+live: 
+	make -j2 css templ
 
 build:
-	@npx tailwindcss -i view/css/app.css -o public/styles.css
+	@npx tailwindcss -i view/css/app.css -o public/styles.css --minify
 	@templ generate view
 	@go build -tags dev -o bin/dreampicai main.go 
 
@@ -47,6 +53,3 @@ seed:
 
 studio:
 	@npx drizzle-kit studio
-
-live: 
-	make -j2 css templ

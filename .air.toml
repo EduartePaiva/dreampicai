@@ -2,9 +2,10 @@ root = "."
 tmp_dit = "tmp"
 
 [build]
+cmd = "go build -tags dev -o ./tmp/main ."
+
 bin = "./tmp/main"
-cmd = "templ generate && npx tailwindcss -i view/css/app.css -o public/styles.css && go build -o ./tmp/main ."
-delay = 1000
+delay = 100
 exclude_dir = ["assets", "tmp", "vendor", "node_modules"]
 exclude_file = []
 exclude_regex = [".*_templ.go"]
