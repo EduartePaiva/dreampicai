@@ -50,6 +50,15 @@ func UpdateAccount(account *types.Account) error {
 	return err
 }
 
+func GetImagesByBatchID(batchID uuid.UUID) ([]types.Image, error) {
+	var images []types.Image
+	err := Bun.NewSelect().
+		Model(&images).
+		Where("batch_id = ?", batchID).
+		Scan(context.Background())
+	return images, err
+}
+
 func GetAccountByUserID(userID uuid.UUID) (types.Account, error) {
 	account := types.Account{}
 	err := Bun.NewSelect().

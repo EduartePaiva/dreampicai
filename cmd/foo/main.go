@@ -31,7 +31,7 @@ func foo() {
 	version := "bea09cf018e513cef0841719559ea86d2299e05448633ac8fe270b5d5cd6777e"
 
 	input := replicate.PredictionInput{
-		"prompt":              "murlock",
+		"prompt":              "a nice body woman in a red dress",
 		"width":               1024,
 		"height":              1024,
 		"scheduler":           "DPM++SDE",
@@ -43,7 +43,7 @@ func foo() {
 	}
 
 	webhook := replicate.Webhook{
-		URL:    "https://webhook.site/70353b7a-e9e9-420c-8a15-cd26bcd21d7b",
+		URL:    "https://webhook.site/07a0a78f-b48a-4945-9241-38a7f3d183f4",
 		Events: []replicate.WebhookEventType{"start", "completed"},
 	}
 
