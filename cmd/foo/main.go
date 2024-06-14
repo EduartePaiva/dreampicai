@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/replicate/replicate-go"
@@ -43,7 +44,7 @@ func foo() {
 	}
 
 	webhook := replicate.Webhook{
-		URL:    "https://webhook.site/07a0a78f-b48a-4945-9241-38a7f3d183f4",
+		URL:    os.Getenv("REPLICATE_CALLBACK_URL"),
 		Events: []replicate.WebhookEventType{"start", "completed"},
 	}
 

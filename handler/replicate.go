@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"context"
+	"database/sql"
 	"dreampicai/db"
 	"dreampicai/types"
 	"encoding/json"
@@ -9,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
+	"github.com/uptrace/bun"
 )
 
 // "input": {
@@ -31,7 +34,10 @@ type ReplicateResp struct {
 	} `json:"input"`
 }
 
-const succeeded = "succeeded"
+const (
+	processing = "processing"
+	succeeded  = "succeeded"
+)
 
 func HandleReplicateCallback(w http.ResponseWriter, r *http.Request) error {
 	var resp ReplicateResp
@@ -39,6 +45,9 @@ func HandleReplicateCallback(w http.ResponseWriter, r *http.Request) error {
 	err := json.NewDecoder(r.Body).Decode(&resp)
 	if err != nil {
 		return err
+	}
+	if resp.Status == processing {
+		return nil
 	}
 	if resp.Status != succeeded {
 		return fmt.Errorf("replicate callback response with a non ok status: %s", resp.Status)
@@ -57,15 +66,17 @@ func HandleReplicateCallback(w http.ResponseWriter, r *http.Request) error {
 	if len(images) != len(resp.Output) {
 		return fmt.Errorf("replicate callback un-equal images compared to replicate output")
 	}
-
-	for i, imageURL := range resp.Output {
-		images[i].Status = types.ImageStatusCompleted
-		images[i].ImageLocation = imageURL
-		images[i].Prompt = resp.Input.Prompt
-	}
-
-	// fmt.Println(resp)
-	fmt.Printf("%+v\n", resp)
-
-	return nil
+	err = db.Bun.RunInTx(r.Context(), &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
+		for i, imageURL := range resp.Output {
+			images[i].Status = types.ImageStatusCompleted
+			images[i].ImageLocation = imageURL
+			images[i].Prompt = resp.Input.Prompt
+			if err := db.UpdateImage(&images[i]); err != nil {
+				return err
+			}
+		}
+		return nil
+	})
+	// fmt.Printf("%+v\n", resp)
+	return err
 }

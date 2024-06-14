@@ -92,7 +92,7 @@ templ Gallery(images []types.Image) {
 
 templ GalleryImage(image types.Image) {
 	if image.Status == types.ImageStatusCompleted {
-		<div class="bg-green-100 rounded-xl aspect-[2/3] cursor-pointer">
+		<div class="rounded-xl aspect-[2/3] cursor-pointer">
 			<img
 				class="object-cover rounded-xl"
 				src={ image.ImageLocation }

@@ -64,7 +64,6 @@ func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
 	err := db.Bun.RunInTx(r.Context(), &sql.TxOptions{}, func(ctx context.Context, tx bun.Tx) error {
 		for range params.Amount {
 			img := types.Image{
-				Prompt:  params.Prompt,
 				UserID:  user.ID,
 				Status:  types.ImageStatusPending,
 				BatchID: batchID,
