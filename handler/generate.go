@@ -19,6 +19,8 @@ import (
 	"github.com/uptrace/bun"
 )
 
+const creditsPerImage = 2
+
 func HandleGenerateIndex(w http.ResponseWriter, r *http.Request) error {
 	user := getAuthenticatedUser(r)
 	images, err := db.GetImagesByUserID(user.ID)
@@ -49,6 +51,15 @@ func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
 	if !ok {
 		return render(r, w, generate.Form(params, errors))
 	}
+
+	creditsNeeded := params.Amount * creditsPerImage
+	if user.Credits < creditsNeeded {
+		errors.Credits = true
+		errors.CreditsNeeded = creditsNeeded
+		errors.UserCredits = user.Account.Credits
+		return render(r, w, generate.Form(params, errors))
+	}
+	return nil
 
 	batchID := uuid.New()
 	genParams := GenerateImagesParams{

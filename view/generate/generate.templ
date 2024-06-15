@@ -5,6 +5,7 @@ import (
 	"dreampicai/types"
 	"fmt"
 	"strconv"
+	"dreampicai/view/components"
 )
 
 type ViewData struct {
@@ -31,8 +32,11 @@ type FormParams struct {
 	Amount int
 }
 type FormErrors struct {
-	Prompt string
-	Amount string
+	Prompt        string
+	Amount        string
+	CreditsNeeded int
+	UserCredits   int
+	Credits       bool
 }
 
 templ Form(params FormParams, errors FormErrors) {
@@ -80,6 +84,9 @@ templ Form(params FormParams, errors FormErrors) {
 			<button class="btn mt-4 btn-primary w-full">generate</button>
 		</div>
 	</form>
+	if errors.Credits {
+		@components.CreditsModal(errors.CreditsNeeded, errors.UserCredits)
+	}
 }
 
 templ Gallery(images []types.Image) {

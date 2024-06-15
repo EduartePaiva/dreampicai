@@ -29,6 +29,13 @@
       "when": 1717419087018,
       "tag": "0003_faithful_master_chief",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1718472734856,
+      "tag": "0004_quiet_mojo",
+      "breakpoints": true
     }
   ]
 }

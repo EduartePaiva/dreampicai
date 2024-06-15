@@ -1,0 +1,1 @@
+ALTER TABLE "accounts" ADD COLUMN "credits" integer DEFAULT 0;

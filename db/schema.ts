@@ -18,6 +18,7 @@ export const user = pgTable("accounts", {
     id: serial("id").primaryKey(),
     userId: uuid("user_id").references(() => users.id),
     userName: text("user_name").notNull(),
+    credits: integer("credits").default(0),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
