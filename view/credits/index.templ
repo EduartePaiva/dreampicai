@@ -1,0 +1,47 @@
+package credits
+
+import "dreampicai/view/layout"
+import "fmt"
+
+type Pricing struct {
+	Credits   string
+	Price     string
+	ProductID string
+}
+
+var prices = []Pricing{
+	{
+		Credits:   "100",
+		Price:     "9.99",
+		ProductID: "a",
+	},
+	{
+		Credits:   "250",
+		Price:     "19.99",
+		ProductID: "b",
+	},
+	{
+		Credits:   "550",
+		Price:     "29.99",
+		ProductID: "c",
+	},
+}
+
+templ Index() {
+	@layout.App(true) {
+		<div class="w-full max-w-4xl bg-base-300 rounded-xl mt-12 px-8 py-24 mx-auto">
+			<div class="flex justify-evenly w-full">
+				for _,price:= range prices {
+					@PriceCard(price)
+				}
+			</div>
+		</div>
+	}
+}
+
+templ PriceCard(pricing Pricing) {
+	<div hx-get={ fmt.Sprintf("/checkout/%s", pricing.ProductID) } class="border border-gray-700 hover:border-secondary px-6 py-4 rounded-lg text-center cursor-pointer">
+		<div class="mb-8 text-2xl font-black text-secondary">{ pricing.Credits } credits</div>
+		<div class="text-xl">${ pricing.Price }</div>
+	</div>
+}

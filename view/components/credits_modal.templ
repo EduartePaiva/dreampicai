@@ -9,7 +9,11 @@ templ CreditsModal(creditsNeeded, userCredits int) {
 			<h3 class="font-bold text-lg">Buy credits</h3>
 			<p class="py-4">Buy more credits to keep using this feature</p>
 			<p class="py-4">You have { strconv.Itoa(userCredits) } but need { strconv.Itoa(creditsNeeded) } </p>
-			<div class="modal-action">
+			<div class="modal-action flex justify-between">
+				<a
+					href="/buy-credits"
+					class="btn bg-gradient-to-r from-purple-500 via-purple-700 to-purple-900"
+				>Buy credits</a>
 				<form method="dialog">
 					<!-- if there is a button in form, it will close the modal -->
 					<button class="btn">Close</button>
