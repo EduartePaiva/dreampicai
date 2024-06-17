@@ -55,7 +55,10 @@ func main() {
 		auth.Get("/generate/image/status/{id}", handler.Make(handler.HandleGenerateImageStatus))
 
 		auth.Get("/buy-credits", handler.Make(handler.HandleCreditsIndex))
-		auth.Get("/checkout/{productID}", handler.Make(handler.HandleStripeCheckoutCreate))
+		auth.Get("/checkout/create/{productID}", handler.Make(handler.HandleStripeCheckoutCreate))
+		auth.Get("/checkout/success/{sessionID}", handler.Make(handler.HandleStripeCheckoutSuccess))
+		auth.Get("/checkout/cancel", handler.Make(handler.HandleStripeCheckoutCancel))
+
 	})
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")

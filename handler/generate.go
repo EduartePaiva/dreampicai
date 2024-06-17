@@ -59,7 +59,6 @@ func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
 		errors.UserCredits = user.Account.Credits
 		return render(r, w, generate.Form(params, errors))
 	}
-	return nil
 
 	batchID := uuid.New()
 	genParams := GenerateImagesParams{
@@ -88,6 +87,12 @@ func HandleGenerateCreate(w http.ResponseWriter, r *http.Request) error {
 	if err != nil {
 		return err
 	}
+
+	user.Account.Credits -= creditsNeeded
+	if err := db.UpdateAccount(&user.Account); err != nil {
+		return err
+	}
+
 	return hxRedirect(w, r, "/generate")
 }
 func HandleGenerateImageStatus(w http.ResponseWriter, r *http.Request) error {
@@ -138,7 +143,7 @@ func generateImage(ctx context.Context, params GenerateImagesParams) error {
 
 	webhook := replicate.Webhook{
 		URL:    fmt.Sprintf("%s/%s/%s", os.Getenv("REPLICATE_CALLBACK_URL"), params.UserID, params.BatchID),
-		Events: []replicate.WebhookEventType{"start", "completed"},
+		Events: []replicate.WebhookEventType{"completed"},
 	}
 
 	// Run a model and wait for its output
