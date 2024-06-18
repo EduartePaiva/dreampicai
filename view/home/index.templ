@@ -1,6 +1,11 @@
 package home
 
 import "dreampicai/view/layout"
+import "strconv"
+
+templ UserLikes(amount int) {
+	<div>{ strconv.Itoa(amount) } user likes!</div>
+}
 
 templ Index() {
 	@layout.App(true) {
@@ -9,7 +14,15 @@ templ Index() {
 				hello from the home page senior!
 			</h1>
 			<h2 class="text-xl font-semibold mb-6">this is some amazing AI application!</h2>
-			<a href="/generate" class="btn btn-primary">Generate images now <i class="fa-solid fa-arrow-right"></i></a>
+			<a href="/generate" class="btn btn-primary mb-10">Generate images now <i class="fa-solid fa-arrow-right"></i></a>
+			<div
+				hx-get="/long-process"
+				hx-indicator="#spinner"
+				hx-trigger="load"
+				class="text-5xl"
+			>
+				<span id="spinner" class="loading loading-ring loading-lg htmx-indicator"></span>
+			</div>
 		</div>
 	}
 }

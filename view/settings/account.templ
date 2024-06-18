@@ -24,20 +24,6 @@ templ Index(user types.AuthenticatedUser) {
 					</dd>
 				</div>
 			</div>
-			<div class="mt-10">
-				<h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Reset password</h1>
-				<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
-					<dt>Reset Password</dt>
-					<dd class="sm:col-span-2 sm:mt-0">
-						<form
-							hx-post="/settings/account/password"
-							hx-swap="outerHTML"
-						>
-							<button class="btn btn-primary">reset password</button>
-						</form>
-					</dd>
-				</div>
-			</div>
 		</div>
 	}
 }

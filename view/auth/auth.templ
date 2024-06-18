@@ -3,66 +3,6 @@ package auth
 import "dreampicai/view/layout"
 import "github.com/nedpals/supabase-go"
 
-templ ResetPassword() {
-	@layout.App(true) {
-		<div class="max-w-2xl w-full mx-auto mt-8">
-			<div>
-				<h1 class="text-lg font-semibold border-b border-gray-700 pb-2">Reset password</h1>
-				@ResetPasswordForm(ResetPasswordErrors{})
-			</div>
-		</div>
-	}
-}
-
-type ResetPasswordErrors struct {
-	NewPassword     string
-	ConfirmPassword string
-}
-type ResetPasswordParams struct {
-	NewPassword     string
-	ConfirmPassword string
-}
-
-templ ResetPasswordForm(errors ResetPasswordErrors) {
-	<form
-		hx-put="/auth/reset-password"
-		hx-swap="outerHTML"
-	>
-		<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
-			<dt>Enter new password</dt>
-			<dd class="sm:col-span-2 sm:mt-0">
-				<input
-					type="password"
-					class="input input-bordered w-full max-w-sm"
-					name="new-password"
-				/>
-				if len(errors.NewPassword) > 0 {
-					<div class="text-sm text-error mt-1">{ errors.NewPassword }</div>
-				}
-			</dd>
-			<dt>Confirm new password</dt>
-			<dd class="sm:col-span-2 sm:mt-0">
-				<input
-					type="password"
-					class="input input-bordered w-full max-w-sm"
-					name="confirm-password"
-				/>
-				if len(errors.ConfirmPassword) > 0 {
-					<div class="text-sm text-error mt-1">{ errors.ConfirmPassword }</div>
-				}
-			</dd>
-			<dt></dt>
-			<dd>
-				<button class="btn btn-primary">update password</button>
-			</dd>
-		</div>
-	</form>
-}
-
-templ ResetPasswordInitiated(email string) {
-	<div>A password reset link is being sent to <span class="text-info font-semibold">{ email }</span></div>
-}
-
 templ AccountSetup() {
 	@layout.App(true) {
 		<div class="max-w-xl w-full bg-base-300 mx-auto mt-4 px-6 py-12 rounded-xl">
@@ -110,81 +50,8 @@ templ Login() {
 	}
 }
 
-templ SignUp() {
-	@layout.App(false) {
-		<div class="flex justify-center mt-[8rem]">
-			<div class="max-w-md w-full bg-base-300 py-12 px-8 rounded-xl">
-				<h1 class="text-center text-xl font-black mb-10">Signup to dreampicai</h1>
-				@SignupForm(SignupParams{}, SignupErrors{})
-			</div>
-		</div>
-	}
-}
-
-templ SignupSuccess(email string) {
-	<div>A confirmation email has been sent to: <span class="font-semibold text-success">{ email }</span></div>
-}
-
-type SignupParams struct {
-	Email           string
-	Password        string
-	ConfirmPassword string
-}
-
-type SignupErrors struct {
-	Email           string
-	Password        string
-	ConfirmPassword string
-}
-
-templ SignupForm(params SignupParams, errors SignupErrors) {
-	<form
-		hx-post="/signup"
-		hx-swap="outerHTML"
-		class="space-y-4"
-	>
-		<label class="form-control w-full">
-			<div class="label">
-				<span class="label-text">Email address</span>
-			</div>
-			<input type="email" value={ params.Email } name="email" required placeholder="Type here" class="input input-bordered w-full"/>
-			if len(errors.Email) > 0 {
-				<div class="label">
-					<span class="label-text-alt text-error">{ errors.Email }</span>
-				</div>
-			}
-		</label>
-		<label class="form-control w-full">
-			<div class="label">
-				<span class="label-text">Password</span>
-			</div>
-			<input type="password" name="password" required autocomplete="off" class="input input-bordered w-full"/>
-			if len(errors.Password) > 0 {
-				<div class="label">
-					<span class="label-text-alt text-error">{ errors.Password }</span>
-				</div>
-			}
-		</label>
-		<label class="form-control w-full">
-			<div class="label">
-				<span class="label-text">Confirm Password</span>
-			</div>
-			<input type="password" name="confirmPassword" required autocomplete="off" class="input input-bordered w-full"/>
-			if len(errors.ConfirmPassword) > 0 {
-				<div class="label">
-					<span class="label-text-alt text-error">{ errors.ConfirmPassword }</span>
-				</div>
-			}
-		</label>
-		<button class="btn btn-primary w-full" type="submit">
-			signup <i class="fa-solid fa-arrow-right"></i>
-		</button>
-	</form>
-}
-
 type LoginErrors struct {
 	Email              string
-	Password           string
 	InvalidCredentials string
 }
 
@@ -205,20 +72,6 @@ templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
 				</div>
 			}
 		</label>
-		<label class="form-control w-full">
-			<div class="label">
-				<span class="label-text">Password</span>
-			</div>
-			<input type="password" name="password" required autocomplete="off" placeholder="Type here" class="input input-bordered w-full"/>
-			if len(errors.Password) > 0 {
-				<div class="label">
-					<span class="label-text-alt text-error">{ errors.Password }</span>
-				</div>
-			}
-		</label>
-		if len(errors.InvalidCredentials) > 0 {
-			<div class="text-sm text-error">{ errors.InvalidCredentials }</div>
-		}
 		<button class="btn btn-primary w-full" type="submit">
 			login <i class="fa-solid fa-arrow-right"></i>
 		</button>
@@ -227,6 +80,10 @@ templ LoginForm(credentials supabase.UserCredentials, errors LoginErrors) {
 			login with google<i class="fa-brands fa-google"></i>
 		</a>
 	</form>
+}
+
+templ MagicLingSuccess(email string) {
+	<div>An email to login has been sent to <span class="text-info">{ email }</span></div>
 }
 
 templ CallbackScript() {
