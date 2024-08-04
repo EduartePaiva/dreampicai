@@ -142,7 +142,7 @@ func generateImage(ctx context.Context, params GenerateImagesParams) error {
 	}
 
 	webhook := replicate.Webhook{
-		URL:    fmt.Sprintf("%s/%s/%s", os.Getenv("REPLICATE_CALLBACK_URL"), params.UserID, params.BatchID),
+		URL:    fmt.Sprintf("%s/replicate/callback/%s/%s", os.Getenv("REPLICATE_CALLBACK_URL"), params.UserID, params.BatchID),
 		Events: []replicate.WebhookEventType{"completed"},
 	}
 
